@@ -7,22 +7,35 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 def authorization(browser, login, password):
     inputs = browser.find_elements(By.TAG_NAME, "input")
+    time.sleep(1)
     buttons = browser.find_elements(By.TAG_NAME, "button")
+    time.sleep(1)
     inputs[2].send_keys(login)
     inputs[3].send_keys(password)
+    time.sleep(1)
     print(f"Логин: {login}\nПароль: {password}")
     buttons[1].click()
-    time.sleep(125)
-
 
 
 if __name__ == "__main__":
     with open('data') as data:
         login, password, url = data.read().split()
+        print( login, password, url )
     with webdriver.Chrome() as browser:
-        wait = WebDriverWait(browser, 10)  # Увеличил время ожидания
         browser.get(url)
         authorization(browser, login, password)
+        time.sleep(6)
+        rows = browser.find_elements(By.XPATH, "//tbody//tr")
+
+        disciplines = {}
+        for row in rows:
+            cells = row.find_elements(By.TAG_NAME, 'td')
+            a_href = cells[4].find_elements(By.TAG_NAME, 'a')[1].get_attribute("href")
+            disciplines[f'{cells[2].text} {cells[1].text}'] = a_href
+    print(disciplines)
+            
+
+            
 
 '''
     for element in buttons:
